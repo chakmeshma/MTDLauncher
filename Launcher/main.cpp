@@ -86,6 +86,11 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	switch (Message)
 	{
+	case WM_INITDIALOG:
+		for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
+			ValidateEdit(hwnd, it->first);
+		}
+		break;
 	case WM_COMMAND:
 		if (HIWORD(wParam) == EN_KILLFOCUS) {
 			ValidateEdit(hwnd, LOWORD(wParam));
@@ -94,12 +99,12 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 		switch (LOWORD(wParam))
 		{
-		case IDCANCEL:
+		case IDOK:
 			//char txt[1024];
 
 			//GetDlgItemText(hwnd, IDC_EDIT1, txt, 1024);
 
-			//MessageBoxA(NULL, txt, "SDFDSF", MB_OK);
+			MessageBoxA(NULL, "txt", "SDFDSF", MB_OK);
 			break;
 		}
 		break;
