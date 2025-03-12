@@ -8,29 +8,39 @@
 #include "ini.h"
 
 std::map<int, std::string> mapEditID_StrKey{};
+std::map<std::string, float> mapStrKey_Value{};
 
 void InitLoad() {
-	iniReaderInstantiate("C:\\settings.ini");
+	mapEditID_StrKey[IDC_EDIT1] = "JetAltitude";
+
+	void* iniReader = iniReaderInstantiate("C:\\settings.ini");
+
+	mapStrKey_Value["JetAltitude"] = iniReaderGetFloat(iniReader, "Geometry", "JetAltitude");
+
+	iniReaderDestroy(iniReader);
 }
 
 void ValidateEdit(HWND hwnd, int ID) {
 
-	//char buf[1024];
-	//GetDlgItemText(hwnd, ID, buf, 1024);
+	if (mapEditID_StrKey.find(ID) == mapEditID_StrKey.end())
+		return;
 
-	//float newValue = lastValue;
+	char buf[1024];
+	GetDlgItemText(hwnd, ID, buf, 1024);
 
-	//try {
-	//	float canNewValue = std::stof(buf);
-	//	newValue = canNewValue;
-	//}
-	//catch (...) {
+	float newValue = mapStrKey_Value[mapEditID_StrKey[ID]];
 
-	//}
+	try {
+		float canNewValue = std::stof(buf);
+		newValue = canNewValue;
+	}
+	catch (...) {
 
-	//lastValue = newValue;
+	}
 
-	//SetDlgItemText(hwnd, ID, std::to_string(newValue).c_str());
+	mapStrKey_Value[mapEditID_StrKey[ID]] = newValue;
+
+	SetDlgItemText(hwnd, ID, std::to_string(newValue).c_str());
 }
 
 
