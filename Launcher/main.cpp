@@ -58,6 +58,18 @@ void InitLoad() {
 	iniReaderDestroy(iniReader);
 }
 
+std::string removeTrailingZeros(const std::string& number) {
+	std::string result = number;
+	while (!result.empty() && result.back() == '0') {
+		result.pop_back(); // Remove the last character if it is '0'
+	}
+
+	if (result.back() == '.')
+		result.pop_back();
+
+	return result;
+}
+
 void ValidateEdit(HWND hwnd, int ID) {
 
 	if (mapEditID_StrKey.find(ID) == mapEditID_StrKey.end())
@@ -78,7 +90,7 @@ void ValidateEdit(HWND hwnd, int ID) {
 
 	mapStrKey_Value[mapEditID_StrKey[ID]] = newValue;
 
-	SetDlgItemText(hwnd, ID, std::to_string(newValue).c_str());
+	SetDlgItemText(hwnd, ID, removeTrailingZeros(std::to_string(newValue)).c_str());
 }
 
 
