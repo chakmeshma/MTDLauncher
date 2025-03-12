@@ -4,13 +4,15 @@
 #include <string>
 #include <map>
 #include <Windows.h>
+#include <shellapi.h>
 #include <fstream>
 #include "resource.h"
 #include "ini.h"
 
 static std::map<int, std::string> mapEditID_StrKey{};
 static std::map<std::string, float> mapStrKey_Value{};
-static std::string fileName = "";
+static std::string settingsFileName = "";
+static std::string launcheeFileName = "";
 
 void InitLoad() {
 	mapEditID_StrKey[IDC_EDIT1] = "JetAltitude";
@@ -32,7 +34,7 @@ void InitLoad() {
 	mapEditID_StrKey[IDC_EDIT17] = "FilmGrainIntensity";
 	mapEditID_StrKey[IDC_EDIT18] = "CameraFOV";
 
-	void* iniReader = iniReaderInstantiate(fileName.c_str());
+	void* iniReader = iniReaderInstantiate(settingsFileName.c_str());
 
 	mapStrKey_Value["JetAltitude"] = iniReaderGetFloat(iniReader, "Geometry", "JetAltitude");
 	mapStrKey_Value["JetSpeed"] = iniReaderGetFloat(iniReader, "Geometry", "JetSpeed");
@@ -101,7 +103,7 @@ bool Save() {
 	AppendFloatLine("FilmGrainIntensity", newFileData);
 	AppendFloatLine("CameraFOV", newFileData);
 
-	std::ofstream saveFile(fileName.c_str());
+	std::ofstream saveFile(settingsFileName.c_str());
 
 	if (saveFile.is_open()) {
 		saveFile << newFileData;
@@ -176,7 +178,10 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				MessageBox(hwnd, "Couldn't open settings.ini file for saving!", "Error", MB_OK);
 			}
 			else
+			{
+				ShellExecute(0, "open", launcheeFileName.c_str(), NULL, NULL, SW_SHOWNORMAL);
 				EndDialog(hwnd, 0);
+			}
 
 			break;
 		}
@@ -192,7 +197,19 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	fileName = "C:\\settings.ini";
+	char currDir[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, currDir);
+
+	settingsFileName = "";
+	settingsFileName += currDir;
+	settingsFileName += "\\settings.ini";
+
+	launcheeFileName = "";
+	launcheeFileName += currDir;
+	launcheeFileName += "\\MissileTrackingDemo.exe";
+
+	//launcheeFileName = "C:\\Users\\chakm\\OneDrive\\Desktop\\Windows\\MissileTrackingDemo.exe";
+
 
 	InitLoad();
 
