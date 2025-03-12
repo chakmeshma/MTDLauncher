@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <Windows.h>
+#include <fstream>
 #include "resource.h"
 #include "ini.h"
 
@@ -102,6 +103,14 @@ void Save() {
 
 	newFileData += "\r\n";
 
+	std::ofstream saveFile(fileName.c_str());
+
+	if (saveFile.is_open()) {
+		saveFile << newFileData;
+
+		saveFile.close();
+	}
+
 	return;
 }
 
@@ -159,7 +168,12 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case IDOK:
+			for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
+				ValidateEdit(hwnd, it->first);
+			}
+
 			Save();
+
 			EndDialog(hwnd, 0);
 			break;
 		}
