@@ -64,7 +64,7 @@ void AppendFloatLine(const std::string& key, std::string& strData) {
 	strData += key;
 	strData += " = ";
 	strData += std::to_string(mapStrKey_Value[key]);
-	strData += "\r\n";
+	strData += "\n";
 }
 
 void AppendVectorLine(const std::string& key, std::string& strData) {
@@ -79,12 +79,12 @@ void AppendVectorLine(const std::string& key, std::string& strData) {
 	strData += " ";
 	strData += std::to_string(mapStrKey_Value[key + ";A"]);
 
-	strData += "\r\n";
+	strData += "\n";
 }
 
-void Save() {
+bool Save() {
 	std::string newFileData = "";
-	newFileData += "[Geometry]\r\n";
+	newFileData += "[Geometry]\n";
 
 	AppendFloatLine("JetAltitude", newFileData);
 	AppendFloatLine("JetSpeed", newFileData);
@@ -95,13 +95,11 @@ void Save() {
 	AppendFloatLine("RotationAngleLimit", newFileData);
 	AppendFloatLine("DetectionRectMinArea", newFileData);
 
-	newFileData += "\r\n[Rendering]\r\n";
+	newFileData += "\n[Rendering]\n";
 	AppendVectorLine("ColorSaturation", newFileData);
 	AppendVectorLine("ColorContrast", newFileData);
 	AppendFloatLine("FilmGrainIntensity", newFileData);
 	AppendFloatLine("CameraFOV", newFileData);
-
-	newFileData += "\r\n";
 
 	std::ofstream saveFile(fileName.c_str());
 
@@ -109,9 +107,11 @@ void Save() {
 		saveFile << newFileData;
 
 		saveFile.close();
+
+		return true;
 	}
 
-	return;
+	return false;
 }
 
 std::string removeTrailingZeros(const std::string& number) {
@@ -172,9 +172,12 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				ValidateEdit(hwnd, it->first);
 			}
 
-			Save();
+			if (!Save()) {
+				MessageBox(hwnd, "Couldn't open settings.ini file for saving!", "Error", MB_OK);
+			}
+			else
+				EndDialog(hwnd, 0);
 
-			EndDialog(hwnd, 0);
 			break;
 		}
 		break;
