@@ -20,15 +20,15 @@ void InitLoad() {
 	mapEditID_StrKey[IDC_EDIT7] = "RotationAngleLimit";
 	mapEditID_StrKey[IDC_EDIT8] = "DetectionRectMinArea";
 	mapEditID_StrKey[IDC_EDIT9] = "ColorSaturation;R";
-	mapEditID_StrKey[IDC_EDIT13] = "ColorSaturation;G";
-	mapEditID_StrKey[IDC_EDIT14] = "ColorSaturation;B";
-	mapEditID_StrKey[IDC_EDIT17] = "ColorSaturation;A";
-	mapEditID_StrKey[IDC_EDIT10] = "ColorContrast;R";
-	mapEditID_StrKey[IDC_EDIT15] = "ColorContrast;G";
-	mapEditID_StrKey[IDC_EDIT16] = "ColorContrast;B";
-	mapEditID_StrKey[IDC_EDIT18] = "ColorContrast;A";
-	mapEditID_StrKey[IDC_EDIT11] = "FilmGrainIntensity";
-	mapEditID_StrKey[IDC_EDIT12] = "CameraFOV";
+	mapEditID_StrKey[IDC_EDIT10] = "ColorSaturation;G";
+	mapEditID_StrKey[IDC_EDIT11] = "ColorSaturation;B";
+	mapEditID_StrKey[IDC_EDIT12] = "ColorSaturation;A";
+	mapEditID_StrKey[IDC_EDIT13] = "ColorContrast;R";
+	mapEditID_StrKey[IDC_EDIT14] = "ColorContrast;G";
+	mapEditID_StrKey[IDC_EDIT15] = "ColorContrast;B";
+	mapEditID_StrKey[IDC_EDIT16] = "ColorContrast;A";
+	mapEditID_StrKey[IDC_EDIT17] = "FilmGrainIntensity";
+	mapEditID_StrKey[IDC_EDIT18] = "CameraFOV";
 
 	void* iniReader = iniReaderInstantiate("C:\\settings.ini");
 
