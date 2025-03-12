@@ -2,9 +2,16 @@
 
 
 #include <string>
+#include <map>
 #include <Windows.h>
 #include "resource.h"
 #include "ini.h"
+
+std::map<int, std::string> mapEditID_StrKey{};
+
+void InitLoad() {
+	iniReaderInstantiate("C:\\settings.ini");
+}
 
 void ValidateEdit(HWND hwnd, int ID) {
 
@@ -29,9 +36,6 @@ void ValidateEdit(HWND hwnd, int ID) {
 
 LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	int azzz = 34;
-	WORD bb{};
-
 	switch (Message)
 	{
 	case WM_COMMAND:
@@ -62,5 +66,7 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	InitLoad();
+
 	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 }
