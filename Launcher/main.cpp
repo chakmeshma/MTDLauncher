@@ -7,8 +7,9 @@
 #include "resource.h"
 #include "ini.h"
 
-std::map<int, std::string> mapEditID_StrKey{};
-std::map<std::string, float> mapStrKey_Value{};
+static std::map<int, std::string> mapEditID_StrKey{};
+static std::map<std::string, float> mapStrKey_Value{};
+static std::string fileName = "";
 
 void InitLoad() {
 	mapEditID_StrKey[IDC_EDIT1] = "JetAltitude";
@@ -30,7 +31,7 @@ void InitLoad() {
 	mapEditID_StrKey[IDC_EDIT17] = "FilmGrainIntensity";
 	mapEditID_StrKey[IDC_EDIT18] = "CameraFOV";
 
-	void* iniReader = iniReaderInstantiate("C:\\settings.ini");
+	void* iniReader = iniReaderInstantiate(fileName.c_str());
 
 	mapStrKey_Value["JetAltitude"] = iniReaderGetFloat(iniReader, "Geometry", "JetAltitude");
 	mapStrKey_Value["JetSpeed"] = iniReaderGetFloat(iniReader, "Geometry", "JetSpeed");
@@ -56,6 +57,52 @@ void InitLoad() {
 
 
 	iniReaderDestroy(iniReader);
+}
+
+void AppendFloatLine(const std::string& key, std::string& strData) {
+	strData += key;
+	strData += " = ";
+	strData += std::to_string(mapStrKey_Value[key]);
+	strData += "\r\n";
+}
+
+void AppendVectorLine(const std::string& key, std::string& strData) {
+	strData += key;
+	strData += " = ";
+
+	strData += std::to_string(mapStrKey_Value[key + ";R"]);
+	strData += " ";
+	strData += std::to_string(mapStrKey_Value[key + ";G"]);
+	strData += " ";
+	strData += std::to_string(mapStrKey_Value[key + ";B"]);
+	strData += " ";
+	strData += std::to_string(mapStrKey_Value[key + ";A"]);
+
+	strData += "\r\n";
+}
+
+void Save() {
+	std::string newFileData = "";
+	newFileData += "[Geometry]\r\n";
+
+	AppendFloatLine("JetAltitude", newFileData);
+	AppendFloatLine("JetSpeed", newFileData);
+	AppendFloatLine("MissileSpeedFactor", newFileData);
+	AppendFloatLine("PropelForce", newFileData);
+	AppendFloatLine("StickDistance", newFileData);
+	AppendFloatLine("ShakeValue", newFileData);
+	AppendFloatLine("RotationAngleLimit", newFileData);
+	AppendFloatLine("DetectionRectMinArea", newFileData);
+
+	newFileData += "\r\n[Rendering]\r\n";
+	AppendVectorLine("ColorSaturation", newFileData);
+	AppendVectorLine("ColorContrast", newFileData);
+	AppendFloatLine("FilmGrainIntensity", newFileData);
+	AppendFloatLine("CameraFOV", newFileData);
+
+	newFileData += "\r\n";
+
+	return;
 }
 
 std::string removeTrailingZeros(const std::string& number) {
@@ -112,11 +159,8 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case IDOK:
-			//char txt[1024];
-
-			//GetDlgItemText(hwnd, IDC_EDIT1, txt, 1024);
-
-			MessageBoxA(NULL, "txt", "SDFDSF", MB_OK);
+			Save();
+			EndDialog(hwnd, 0);
 			break;
 		}
 		break;
@@ -131,6 +175,8 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	fileName = "C:\\settings.ini";
+
 	InitLoad();
 
 	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
