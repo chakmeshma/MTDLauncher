@@ -11,6 +11,7 @@
 
 static std::map<int, std::string> mapEditID_StrKey{};
 static std::map<std::string, float> mapStrKey_Value{};
+static std::map<std::string, float> mapStrKey_DefaultValue{};
 static std::string settingsFileName = "";
 static std::string launcheeFileName = "";
 
@@ -60,6 +61,29 @@ void InitLoad() {
 
 
 	iniReaderDestroy(iniReader);
+
+
+	mapStrKey_DefaultValue["JetAltitude"] = iniReaderGetFloat(iniReader, "Geometry", "JetAltitude");
+	mapStrKey_DefaultValue["JetSpeed"] = iniReaderGetFloat(iniReader, "Geometry", "JetSpeed");
+	mapStrKey_DefaultValue["MissileSpeedFactor"] = iniReaderGetFloat(iniReader, "Geometry", "MissileSpeedFactor");
+	mapStrKey_DefaultValue["PropelForce"] = iniReaderGetFloat(iniReader, "Geometry", "PropelForce");
+	mapStrKey_DefaultValue["StickDistance"] = iniReaderGetFloat(iniReader, "Geometry", "StickDistance");
+	mapStrKey_DefaultValue["ShakeValue"] = iniReaderGetFloat(iniReader, "Geometry", "ShakeValue");
+	mapStrKey_DefaultValue["RotationAngleLimit"] = iniReaderGetFloat(iniReader, "Geometry", "RotationAngleLimit");
+	mapStrKey_DefaultValue["DetectionRectMinArea"] = iniReaderGetFloat(iniReader, "Geometry", "DetectionRectMinArea");
+	//mapStrKey_DefaultValue
+	mapStrKey_DefaultValue["ColorSaturation;R"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[0];
+	mapStrKey_DefaultValue["ColorSaturation;G"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[1];
+	mapStrKey_DefaultValue["ColorSaturation;B"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[2];
+	mapStrKey_DefaultValue["ColorSaturation;A"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[3];
+	//mapStrKey_DefaultValue
+	mapStrKey_DefaultValue["ColorContrast;R"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[0];
+	mapStrKey_DefaultValue["ColorContrast;G"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[1];
+	mapStrKey_DefaultValue["ColorContrast;B"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[2];
+	mapStrKey_DefaultValue["ColorContrast;A"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[3];
+	//mapStrKey_DefaultValue
+	mapStrKey_DefaultValue["FilmGrainIntensity"] = iniReaderGetFloat(iniReader, "Rendering", "FilmGrainIntensity");
+	mapStrKey_DefaultValue["CameraFOV"] = iniReaderGetFloat(iniReader, "Rendering", "CameraFOV");
 }
 
 void AppendFloatLine(const std::string& key, std::string& strData) {
@@ -151,15 +175,18 @@ void ValidateEdit(HWND hwnd, int ID) {
 	SetDlgItemText(hwnd, ID, removeTrailingZeros(std::to_string(newValue)).c_str());
 }
 
+void ValidateAllEdit(HWND hwnd) {
+	for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
+		ValidateEdit(hwnd, it->first);
+	}
+}
 
 LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	switch (Message)
 	{
 	case WM_INITDIALOG:
-		for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
-			ValidateEdit(hwnd, it->first);
-		}
+		ValidateAllEdit(hwnd);
 		break;
 	case WM_COMMAND:
 		if (HIWORD(wParam) == EN_KILLFOCUS) {
@@ -167,12 +194,17 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
+		if (HIWORD(wParam) == EN_CHANGE) {
+			if (mapEditID_StrKey.find(LOWORD(wParam)) != mapEditID_StrKey.end())
+				EnableWindow(GetDlgItem(hwnd, IDOK2), TRUE);
+
+			break;
+		}
+
 		switch (LOWORD(wParam))
 		{
 		case IDOK:
-			for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
-				ValidateEdit(hwnd, it->first);
-			}
+			ValidateAllEdit(hwnd);
 
 			if (!Save()) {
 				MessageBox(hwnd, "Couldn't open settings.ini file for saving!", "Error", MB_OK);
@@ -181,6 +213,20 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			{
 				ShellExecute(0, "open", launcheeFileName.c_str(), NULL, NULL, SW_SHOWNORMAL);
 				EndDialog(hwnd, 0);
+			}
+
+			break;
+		case IDOK2:
+			ValidateAllEdit(hwnd);
+
+			if (!Save()) {
+				MessageBox(hwnd, "Couldn't open settings.ini file for saving!", "Error", MB_OK);
+			}
+			else
+			{
+				EnableWindow(GetDlgItem(hwnd, IDOK2), FALSE);
+				//ShellExecute(0, "open", launcheeFileName.c_str(), NULL, NULL, SW_SHOWNORMAL);
+				//EndDialog(hwnd, 0);
 			}
 
 			break;

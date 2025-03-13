@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by Launcher.rc
 //
+#define IDOK2                           2
+#define IDOK3                           3
 #define IDD_DIALOG1                     101
 #define IDC_EDIT1                       1001
 #define IDC_EDIT2                       1002
