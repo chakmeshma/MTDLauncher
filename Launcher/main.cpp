@@ -63,27 +63,27 @@ void InitLoad() {
 	iniReaderDestroy(iniReader);
 
 
-	mapStrKey_DefaultValue["JetAltitude"] = iniReaderGetFloat(iniReader, "Geometry", "JetAltitude");
-	mapStrKey_DefaultValue["JetSpeed"] = iniReaderGetFloat(iniReader, "Geometry", "JetSpeed");
-	mapStrKey_DefaultValue["MissileSpeedFactor"] = iniReaderGetFloat(iniReader, "Geometry", "MissileSpeedFactor");
-	mapStrKey_DefaultValue["PropelForce"] = iniReaderGetFloat(iniReader, "Geometry", "PropelForce");
-	mapStrKey_DefaultValue["StickDistance"] = iniReaderGetFloat(iniReader, "Geometry", "StickDistance");
-	mapStrKey_DefaultValue["ShakeValue"] = iniReaderGetFloat(iniReader, "Geometry", "ShakeValue");
-	mapStrKey_DefaultValue["RotationAngleLimit"] = iniReaderGetFloat(iniReader, "Geometry", "RotationAngleLimit");
-	mapStrKey_DefaultValue["DetectionRectMinArea"] = iniReaderGetFloat(iniReader, "Geometry", "DetectionRectMinArea");
+	mapStrKey_DefaultValue["JetAltitude"] = 98050.0f;
+	mapStrKey_DefaultValue["JetSpeed"] = 600000.0f;
+	mapStrKey_DefaultValue["MissileSpeedFactor"] = 1.5f;
+	mapStrKey_DefaultValue["PropelForce"] = 900001.0f;
+	mapStrKey_DefaultValue["StickDistance"] = 11000.0f;
+	mapStrKey_DefaultValue["ShakeValue"] = 19000000.0f;
+	mapStrKey_DefaultValue["RotationAngleLimit"] = 60.0f;
+	mapStrKey_DefaultValue["DetectionRectMinArea"] = 75.0f;
 	//mapStrKey_DefaultValue
-	mapStrKey_DefaultValue["ColorSaturation;R"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[0];
-	mapStrKey_DefaultValue["ColorSaturation;G"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[1];
-	mapStrKey_DefaultValue["ColorSaturation;B"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[2];
-	mapStrKey_DefaultValue["ColorSaturation;A"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorSaturation")[3];
+	mapStrKey_DefaultValue["ColorSaturation;R"] = 1.0f;
+	mapStrKey_DefaultValue["ColorSaturation;G"] = 1.0f;
+	mapStrKey_DefaultValue["ColorSaturation;B"] = 1.0f;
+	mapStrKey_DefaultValue["ColorSaturation;A"] = 1.0f;
 	//mapStrKey_DefaultValue
-	mapStrKey_DefaultValue["ColorContrast;R"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[0];
-	mapStrKey_DefaultValue["ColorContrast;G"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[1];
-	mapStrKey_DefaultValue["ColorContrast;B"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[2];
-	mapStrKey_DefaultValue["ColorContrast;A"] = iniReaderGetFloatVector(iniReader, "Rendering", "ColorContrast")[3];
+	mapStrKey_DefaultValue["ColorContrast;R"] = 1.0f;
+	mapStrKey_DefaultValue["ColorContrast;G"] = 1.0f;
+	mapStrKey_DefaultValue["ColorContrast;B"] = 1.0f;
+	mapStrKey_DefaultValue["ColorContrast;A"] = 1.0f;
 	//mapStrKey_DefaultValue
-	mapStrKey_DefaultValue["FilmGrainIntensity"] = iniReaderGetFloat(iniReader, "Rendering", "FilmGrainIntensity");
-	mapStrKey_DefaultValue["CameraFOV"] = iniReaderGetFloat(iniReader, "Rendering", "CameraFOV");
+	mapStrKey_DefaultValue["FilmGrainIntensity"] = 0.0f;
+	mapStrKey_DefaultValue["CameraFOV"] = 60.0f;
 }
 
 void AppendFloatLine(const std::string& key, std::string& strData) {
@@ -228,6 +228,18 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				//ShellExecute(0, "open", launcheeFileName.c_str(), NULL, NULL, SW_SHOWNORMAL);
 				//EndDialog(hwnd, 0);
 			}
+
+			break;
+		case IDOK3:
+			for (auto it = mapEditID_StrKey.begin(); it != mapEditID_StrKey.end(); ++it) {
+				SetDlgItemText(hwnd, it->first, "");
+			}
+
+			for (auto it = mapStrKey_Value.begin(); it != mapStrKey_Value.end(); ++it) {
+				mapStrKey_Value[it->first] = mapStrKey_DefaultValue[it->first];
+			}
+
+			ValidateAllEdit(hwnd);
 
 			break;
 		}
