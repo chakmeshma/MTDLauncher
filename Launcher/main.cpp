@@ -268,8 +268,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//launcheeFileName = "C:\\Users\\chakm\\OneDrive\\Desktop\\Windows\\MissileTrackingDemo.exe";
 
+	try
+	{
+		InitLoad();
+	}
+	catch (...) {
+		MessageBox(NULL, "Couldn't open/load settings.ini file!", "Error", MB_OK);
 
-	InitLoad();
+		return EXIT_FAILURE;
+	}
 
 	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 }
